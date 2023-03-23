@@ -11,3 +11,5 @@ export const CALL = 'CALL';
 export const CPS = 'CPS';
 // all 提供多个saga，需要等多个saga全部完成了才会继续向下执行当前的saga
 export const ALL = 'ALL';
+// 取消任务或者说取消saga执行
+export const CANCEL = 'CANCEL';

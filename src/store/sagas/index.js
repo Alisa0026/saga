@@ -1,26 +1,24 @@
-import { take, put, takeEvery, call, all } from '../../redux-saga/effects';
+import { put, takeEvery, call, cps, all, take, fork, cancel, delay } from '../../redux-saga/effects';
 import * as types from '../action-types';
 
-export function* add1() {
-    for (let i = 0; i < 1; i++) {
-        yield take(types.ASYNC_ADD);
-        yield put({ type: types.ADD });
-    }
-    console.log('add1 done ');
-    return 'add1Result';
-}
 
-export function* add2() {
-    for (let i = 0; i < 2; i++) {
-        yield take(types.ASYNC_ADD);
+export function* add() {
+    // 死循环隔1s加1计数器
+    while (true) {
+        yield delay(1000);
         yield put({ type: types.ADD });
     }
-    console.log('add2 done ');
-    return 'add2Result';
+}
+export function* addWatcher() {
+    // 开启新的子进程运行add
+    const task = yield fork(add);
+    console.log(task);
+    yield take(types.STOP_ADD); // 等待停止+1的动作
+    yield cancel(task); // 取消任务
 }
 
 function* rootSaga() {
-    let result = yield all([add1(), add2()])
-    console.log('done', result);
+    yield addWatcher();
 }
+
 export default rootSaga

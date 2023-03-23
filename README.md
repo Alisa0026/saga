@@ -27,3 +27,4 @@ saga 和 thunk 都是处理副作用的
     - index4_call.js 新增 call，让saga中间件调用一个函数，函数会返回 promise，然后等promise完成后继续向下执行本saga
     - index5_cps.js 新增 cps 方法，让saga中间件调用一个函数,此函数在执行结束后，回代用最后一个参数，就是callback，继续向下执行本saga
     - index6_all.js 新增 all 方法，all 提供多个saga，需要等多个saga全部完成了才会继续向下执行当前的saga
+    - index.js 实现 cancel：取消任务, delay：延迟执行

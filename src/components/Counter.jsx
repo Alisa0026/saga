@@ -11,6 +11,7 @@ function Counter() {
             <p>{number}</p>
             <button onClick={() => dispatch({ type: actionTypes.ADD })}>+</button>
             <button onClick={() => dispatch({ type: actionTypes.ASYNC_ADD })}>asyncADD 异步+1</button>
+            <button onClick={() => dispatch({ type: actionTypes.STOP_ADD })}>stop</button>
         </div>
     )
 }

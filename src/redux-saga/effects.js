@@ -40,3 +40,17 @@ export function cps(fn, ...args) {
 export function all(iterators) {
     return { type: effectTypes.ALL, iterators };
 }
+
+// 取消任务
+export function cancel(task) {
+    return { type: effectTypes.CANCEL, task };
+}
+
+const delayFn = (ms) => {
+    return new Promise(resolve => {
+        setTimeout(resolve, ms);
+    })
+}
+export function delay(...args) {
+    return call(delayFn, ...args);
+}

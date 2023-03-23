@@ -1,9 +1,13 @@
 import * as effectTypes from './effectTypes'
+
+const CANCEL_TASK = Symbol.for('CANCEL_TASK');
+
 /**
  * @param {*} env 环境对象，runSaga 中多了参数 env，就可以结构出 {channel, dispatch}
  * @param {*} saga 可能是个生成器，也可能是个迭代器
  */
 function runSaga(env, saga, callback) {
+    let runTask = { cancel: () => next(CANCEL_TASK) };
 
     let { channel, dispatch } = env;
 
@@ -11,13 +15,17 @@ function runSaga(env, saga, callback) {
     let it = typeof saga === 'function' ? saga() : saga;
 
     // 因为cps 中会传err和data，这里修改next的传参为 data,isError
-    function next(data, isError) {
+    function next(value, isError) {
         let result;
         if (isError) { //出错抛出异常
-            result = it.throw(data);
-        } else {
+            result = it.throw(value);
+        }
+        else if (value === CANCEL_TASK) {
+            result = it.return(value); // 如果取消了当前saga执行任务，表示当前的saga直接结束了
+        }
+        else {
             // 没出错下一步
-            result = it.next(data);
+            result = it.next(value);
         }
 
         // 执行next
@@ -50,8 +58,8 @@ function runSaga(env, saga, callback) {
                         break;
 
                     case effectTypes.FORK:
-                        runSaga(env, effect.saga);//开启新的子进程，运行saga
-                        next(); // 当前的saga会继续向下执行
+                        let forkTask = runSaga(env, effect.saga);//开启新的子进程，运行saga
+                        next(forkTask); // 当前的saga会继续向下执行
                         break;
 
                     case effectTypes.CALL:
@@ -81,12 +89,18 @@ function runSaga(env, saga, callback) {
                             runSaga(env, iterator, (data) => {
                                 result[index] = data;
                                 // 计数器和任务总数相等任务结束
-                                if (++count === iterators.length) {
+                                if (count === iterators.length) {
                                     next(result);
                                 }
                             });
                         });
                         break;
+
+                    case effectTypes.CANCEL:
+                        effect.task.cancel();
+                        next();
+                        break;
+
                     default:
                         break;
                 }
@@ -98,5 +112,6 @@ function runSaga(env, saga, callback) {
         }
     }
     next();
+    return runTask;
 }
 export default runSaga

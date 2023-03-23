@@ -15,3 +15,5 @@ npm run dev
 - watcher saga 监听被dispatch的actions,当接受到action或者知道其被触发时，调用worker执行任务
 - root saga 立即启动saga的唯一入口
 
+
+saga 和 thunk 都是处理副作用的

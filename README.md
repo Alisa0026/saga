@@ -22,7 +22,8 @@ saga 和 thunk 都是处理副作用的
 - store
   - sagas
     - index1.js 中watcherSaga里使用了while(true)循环来不停执行，但是如果下面写其他内容永远执行不到
-    - index2.js 对上面问题进行处理，支持fork，fork 开启一个新的子进程运行 workerSaga
-    - index3.js 新增 taskEvery 实现可以无限执行，类似 while(true)
-    - index4.js 新增call，让saga中间件调用一个函数，函数会返回 promise，然后等promise完成后继续向下执行本saga
-    - index.js 新增 cps 方法，让saga中间件调用一个函数,此函数在执行结束后，回代用最后一个参数，就是callback，继续向下执行本saga
+    - index2_fork.js 对上面问题进行处理，支持fork，fork 开启一个新的子进程运行 workerSaga
+    - index3_takeEvery.js 新增 taskEvery 实现可以无限执行，类似 while(true)
+    - index4_call.js 新增 call，让saga中间件调用一个函数，函数会返回 promise，然后等promise完成后继续向下执行本saga
+    - index5_cps.js 新增 cps 方法，让saga中间件调用一个函数,此函数在执行结束后，回代用最后一个参数，就是callback，继续向下执行本saga
+    - index6_all.js 新增 all 方法，all 提供多个saga，需要等多个saga全部完成了才会继续向下执行当前的saga

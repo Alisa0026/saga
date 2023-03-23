@@ -35,3 +35,8 @@ export function call(fn, ...args) {
 export function cps(fn, ...args) {
     return { type: effectTypes.CPS, fn, args };
 }
+
+// 接收 iterators 是数组
+export function all(iterators) {
+    return { type: effectTypes.ALL, iterators };
+}

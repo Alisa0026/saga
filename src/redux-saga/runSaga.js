@@ -3,7 +3,7 @@ import * as effectTypes from './effectTypes'
  * @param {*} env 环境对象，runSaga 中多了参数 env，就可以结构出 {channel, dispatch}
  * @param {*} saga 可能是个生成器，也可能是个迭代器
  */
-function runSaga(env, saga) {
+function runSaga(env, saga, callback) {
 
     let { channel, dispatch } = env;
 
@@ -69,11 +69,32 @@ function runSaga(env, saga) {
                             }
                         });
                         break;
+
+                    case effectTypes.ALL:
+                        // 拿到 iterators 数组
+                        const { iterators } = effect;
+                        let result = [];
+                        let count = 0; // 计数器
+                        // 循环
+                        iterators.forEach((iterator, index) => {
+                            // 开启新的子进程，运行iterator，运行后有个回调，接收数据data
+                            runSaga(env, iterator, (data) => {
+                                result[index] = data;
+                                // 计数器和任务总数相等任务结束
+                                if (++count === iterators.length) {
+                                    next(result);
+                                }
+                            });
+                        });
+                        break;
                     default:
                         break;
                 }
             }
 
+        } else {
+            // 结束时，callback 存在进行调用
+            callback && callback(effect)
         }
     }
     next();

@@ -2,7 +2,7 @@
 
 安装（项目已安装）：
 ```
-npm install redux react-redux redux-saga --save
+npm install redux react-redux redux-saga events --save
 ```
 
 执行查看：

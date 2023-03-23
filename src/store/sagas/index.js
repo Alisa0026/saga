@@ -1,4 +1,4 @@
-import { put, take } from 'redux-saga/effects';
+import { put, take } from '../../redux-saga/effects';
 import * as types from '../action-types';
 
 function delay(ms) {
@@ -9,9 +9,10 @@ function delay(ms) {
 }
 
 /**
- * 工作saga
+ * 工作saga：是做具体工作的，具体是啥自己来实现
  * 
  * put 就是一个指令，告诉saga中间件我要向仓库派发一个动作
+ * 
  */
 function* workerSaga() {
     // 先暂停1000ms
@@ -46,6 +47,7 @@ function* watcherSaga() {
  */
 function* rootSaga() {
     // 监听saga
-    yield watcherSaga();
+    yield watcherSaga(); // 里面有while循环永远执行不完，但是不耽误后面执行
+    console.log('rootSage next');
 }
 export default rootSaga

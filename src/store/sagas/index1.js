@@ -1,4 +1,4 @@
-import { put, take, fork } from '../../redux-saga/effects';
+import { put, take } from '../../redux-saga/effects';
 import * as types from '../action-types';
 
 function delay(ms) {
@@ -33,11 +33,11 @@ function* watcherSaga() {
     // yield take(types.ASYNC_ADD);
     // yield workerSaga();
 
-    yield take(types.ASYNC_ADD);
-    // fork 开启一个新的子进程运行 workerSaga
-    yield fork(workerSaga)
-
-    console.log('watcherSaga next');
+    // 用for循环监听多次，或者 while(true)可以一直执行，不会死循环，会放置控制器，不执行的时候不会占用任何空间，不会消耗任何资源
+    while (true) {
+        yield take(types.ASYNC_ADD);
+        yield workerSaga();
+    }
 }
 
 /**

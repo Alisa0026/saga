@@ -36,6 +36,10 @@ function runSaga(env, saga) {
                         // 同步的会立刻往下执行
                         next();
                         break;
+                    case effectTypes.FORK:
+                        runSaga(env, effect.saga);//开启新的子进程，运行saga
+                        next(); // 当前的saga会继续向下执行
+                        break;
                     default:
                         break;
                 }

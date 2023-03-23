@@ -13,3 +13,16 @@ export function put(action) {
 export function fork(saga) {
     return { type: effectTypes.FORK, saga };
 }
+
+export function takeEvery(actionType, saga) {
+
+    function* takeEveryHelper() {
+        // 本身还是while(true)
+        while (true) {
+            yield take(actionType); // 等待有人向仓库派发此动作
+            yield fork(saga); // 派发后，再开启一个新的子进程允许此saga
+        }
+    }
+    // 开启一个新的子进程，运行 takeEveryHelper
+    return fork(takeEveryHelper);
+}

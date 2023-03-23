@@ -1,19 +1,16 @@
-import { put, takeEvery, call, cps } from '../../redux-saga/effects';
+import { put, takeEvery, call } from '../../redux-saga/effects';
 import * as types from '../action-types';
 
 
-// xx ms之后调用 callback
-function delay(ms, callback) {
+const delay = ms => new Promise((resolve, reject) => {
     setTimeout(() => {
-        // 回调callback参数是 err 和 data
-        callback(null, 'ok');
+        resolve();
     }, ms);
-}
+});
 
 export function* add() {
     // 把1000作为参数传给delay，并调用delay方法，返回promise，等等promise完成再往下走
-    // yield call(delay, 1000)
-    yield cps(delay, 1000)
+    yield call(delay, 1000)
     yield put({ type: types.ADD });
 }
 /**

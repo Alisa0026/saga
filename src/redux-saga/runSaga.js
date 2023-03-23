@@ -10,9 +10,19 @@ function runSaga(env, saga) {
     // 执行saga，是函数执行saga，如果是迭代器返回saga本身
     let it = typeof saga === 'function' ? saga() : saga;
 
-    function next(value) {
+    // 因为cps 中会传err和data，这里修改next的传参为 data,isError
+    function next(data, isError) {
+        let result;
+        if (isError) { //出错抛出异常
+            result = it.throw(data);
+        } else {
+            // 没出错下一步
+            result = it.next(data);
+        }
+
         // 执行next
-        let { done, value: effect } = it.next(value);
+        let { done, value: effect } = result;// 这里用 result 解构
+
         if (!done) {
             // 如果产出指令对象是一个迭代器，会相当于开启一个新的子进程运行此迭代器
             if (typeof effect[Symbol.iterator] === 'function') {
@@ -47,6 +57,17 @@ function runSaga(env, saga) {
                     case effectTypes.CALL:
                         // 参数args传给fn,返回promise，调用then等promise成功后继续next
                         effect.fn(...effect.args).then(next);
+                        break;
+
+                    case effectTypes.CPS:
+                        // 执行fn方法传参args，然后传回调,回调接收参数err(错误对象)，data(结果)
+                        effect.fn(...effect.args, (err, data) => {
+                            if (err) {// 出错
+                                next(err, true);
+                            } else { // 没出错
+                                next(data);
+                            }
+                        });
                         break;
                     default:
                         break;

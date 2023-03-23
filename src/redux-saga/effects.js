@@ -31,3 +31,7 @@ export function call(fn, ...args) {
     // args 是传给 fn 的参数
     return { type: effectTypes.CALL, fn, args };
 }
+
+export function cps(fn, ...args) {
+    return { type: effectTypes.CPS, fn, args };
+}

@@ -26,19 +26,27 @@ function runSaga(env, saga) {
             else {
                 // 判断动作指令类型
                 switch (effect.type) {
+
                     case effectTypes.TAKE:
                         // 监听某个动作，用eventEmitter监听动作类型 effect.actionType，next 往下走，这里只监听一次
                         channel.once(effect.actionType, next);
                         break;
+
                     case effectTypes.PUT:
                         // 派发动作
                         dispatch(effect.action);
                         // 同步的会立刻往下执行
                         next();
                         break;
+
                     case effectTypes.FORK:
                         runSaga(env, effect.saga);//开启新的子进程，运行saga
                         next(); // 当前的saga会继续向下执行
+                        break;
+
+                    case effectTypes.CALL:
+                        // 参数args传给fn,返回promise，调用then等promise成功后继续next
+                        effect.fn(...effect.args).then(next);
                         break;
                     default:
                         break;

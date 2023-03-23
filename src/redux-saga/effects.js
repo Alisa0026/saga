@@ -26,3 +26,8 @@ export function takeEvery(actionType, saga) {
     // 开启一个新的子进程，运行 takeEveryHelper
     return fork(takeEveryHelper);
 }
+
+export function call(fn, ...args) {
+    // args 是传给 fn 的参数
+    return { type: effectTypes.CALL, fn, args };
+}
